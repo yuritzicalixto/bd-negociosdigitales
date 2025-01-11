@@ -30,19 +30,127 @@ estado boolean not null default true
 );
 
 -- Tarea --> Crear tablas: Usuario, Categoria
+-- create table usuario (
+-- id_usuario smallint auto_increment primary key,
+-- usuario varchar (25) not null unique,
+-- contrasena varchar (20) not null,
+-- imagen varchar (30) not null,
+-- fecha_creacion timestamp default current_timestamp,
+-- tipo varchar (30) not null,
+-- estado boolean not null default true
+-- );
+
 create table usuario (
 id_usuario smallint auto_increment primary key,
 usuario varchar (25) not null unique,
 contrasena varchar (20) not null,
 imagen varchar (30) not null,
-fecha_creacion timestamp default current_timestamp,
+fecha_creacion timestamp not null default current_timestamp on update current_timestamp,
 tipo varchar (30) not null,
 estado boolean not null default true
 );
-
 
 create table categoria (
 id_categoria smallint auto_increment primary key,
 nombre varchar (30) not null,
 estado boolean not null default true
+);
+
+-- Tabla Proveedor con llave foranea
+create table proveedor (
+id_proveedor smallint auto_increment primary key,
+rfc char (13) not null unique,
+nombre varchar (20) not null,
+apellido_p varchar (20) not null,
+apellido_m varchar (20) not null,
+telefono char (10) not null unique,
+correo_e varchar (40) not null unique,
+estado boolean not null default true,
+id_direccion smallint not null,
+foreign key (id_direccion) references direccion (id_direccion) on update cascade on delete cascade
+);
+
+-- Tabla Empleado con 2 llaves foraneas
+create table empleado (
+id_empleado smallint auto_increment primary key,
+nombre varchar (20) not null,
+apellido_p varchar (20) not null,
+apellido_m varchar (20) not null,
+telefono char (10) not null,
+correo_e varchar (40) not null unique,
+puesto varchar (40) not null,
+sueldo float not null,
+estado boolean not null default true,
+id_direccion smallint not null,
+foreign key (id_direccion) references direccion (id_direccion) on update cascade on delete cascade,
+id_usuario smallint not null,
+foreign key (id_usuario) references usuario (id_usuario) on update cascade on delete cascade
+);
+
+create table cliente (
+id_cliente smallint auto_increment primary key,
+rfc char (13) not null unique,
+nombre varchar (20) not null,
+apellido_p varchar (20) not null,
+apellido_m varchar (20) not null,
+telefono char (10) not null,
+correo_e varchar (40) not null unique,
+estado boolean not null default true,
+id_direccion smallint not null,
+foreign key (id_direccion) references direccion (id_direccion) on update cascade on delete cascade,
+id_usuario smallint not null,
+foreign key (id_usuario) references usuario (id_usuario) on update cascade on delete cascade
+);
+
+create table producto (
+id_producto smallint auto_increment primary key,
+sku char (8) not null unique,
+descripcion varchar (50) not null,
+precio_compra float not null,
+precio_venta float not null,
+existencia int (11) not null,
+imagen varchar (30) not null,
+estado boolean not null default true,
+id_categoria smallint not null,
+foreign key (id_categoria ) references categoria (id_categoria) on update cascade on delete cascade
+);
+
+create table pedido (
+id_pedido smallint auto_increment primary key,
+fecha timestamp not null default current_timestamp on update current_timestamp,
+total float not null,
+estado boolean not null default true,
+id_proveedor smallint not null,
+foreign key (id_proveedor) references proveedor (id_proveedor) on update cascade on delete cascade,
+id_empleado smallint not null,
+foreign key (id_empleado) references empleado (id_empleado) on update cascade on delete cascade
+);
+
+-- Llaves primarias compuestas
+create table detallepedido (
+cantidad int (11) not null, 
+subtotal float not null,
+id_pedido smallint not null,
+foreign key (id_pedido) references pedido (id_pedido) on update cascade on delete cascade,
+id_producto smallint not null,
+foreign key (id_producto) references producto (id_producto) on update cascade on delete cascade,
+primary key (id_pedido, id_producto) 
+);
+
+create table venta (
+id_venta smallint auto_increment primary key,
+fecha timestamp not null default current_timestamp on update current_timestamp,
+total float not null,
+id_cliente smallint not null,
+foreign key (id_cliente) references cliente (id_cliente) on update cascade on delete cascade
+);
+
+create table detalleventa (
+cantidad int (11) not null, 
+subtotal float not null,
+id_venta smallint not null,
+foreign key (id_venta) references venta (id_venta) on update cascade on delete cascade,
+id_producto smallint not null,
+foreign key (id_producto) references producto (id_producto) on update cascade on delete cascade,
+primary key (id_venta, id_producto) 
 );

@@ -154,3 +154,10 @@ id_producto smallint not null,
 foreign key (id_producto) references producto (id_producto) on update cascade on delete cascade,
 primary key (id_venta, id_producto) 
 );
+
+-- Insertar datos en la tabla
+insert into categoria (nombre) values ("Frutas");
+insert into categoria (nombre) values ("Verduras");
+insert into categoria (nombre) values ("Legumbres");
+insert into categoria (nombre) values ("Lácteos");
+insert into categoria (nombre) values ("Cereales");
